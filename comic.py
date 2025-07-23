@@ -16,13 +16,15 @@ is_dry_run: bool = args.dry
 patternSpaceParen = r"(\s*)\((.*?)\)(\s*)"
 regexSpaceParen = re.compile(patternSpaceParen)
 
-patternVol = r"(v.+)(\d+)"
+patternVol = r"(v)(\d+)"
 regexVol = re.compile(patternVol)
 
 patternVolNum = r"(?!v)(\d+)"
 regexVolNum = re.compile(patternVolNum)
 
 onlyfiles = [f for f in listdir(directory_path) if isfile(join(directory_path, f))]
+if is_dry_run:
+    print("DRY RUN")
 for f in onlyfiles:
     if not f.endswith(".cbr") and not f.endswith(".cbz"):
         continue
@@ -32,7 +34,7 @@ for f in onlyfiles:
     if len(matchList) == 0:
         continue
     volNum = matchList[-1]
-    replacement = "Vol. " + volNum
+    replacement = "v" + volNum
     finalName = regexVol.sub(replacement, newName)
     newFile = join(directory_path, finalName)
     if not is_dry_run:
@@ -42,6 +44,6 @@ for f in onlyfiles:
         except FileNotFoundError:
             print(f"Can't find {f}")
     else:
-        print("DRY RUN")
         print(f"Renaming {f} to {finalName}")
-        print("END OF DRY RUN")
+if is_dry_run:
+    print("END OF DRY RUN")
