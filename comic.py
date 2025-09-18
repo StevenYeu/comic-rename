@@ -9,9 +9,11 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument("src")
 parser.add_argument("-d", "--dry", action="store_true")
+parser.add_argument("-v", "--vol", action="store_true")
 args = parser.parse_args()
 directory_path: str = args.src
 is_dry_run: bool = args.dry
+is_vol: bool = args.vol
 
 patternSpaceParen = r"(\s*)\((.*?)\)(\s*)"
 regexSpaceParen = re.compile(patternSpaceParen)
@@ -34,16 +36,15 @@ for f in onlyfiles:
     if len(matchList) == 0:
         continue
     volNum = matchList[-1]
-    replacement = "v" + volNum
+    replacement = "Vol. " + volNum
     finalName = regexVol.sub(replacement, newName)
     newFile = join(directory_path, finalName)
     if not is_dry_run:
-        print(f"Renaming {f} to {finalName}")
         try:
             rename(originalFile, newFile)
         except FileNotFoundError:
             print(f"Can't find {f}")
     else:
+        print("DRY RUN")
         print(f"Renaming {f} to {finalName}")
-if is_dry_run:
-    print("END OF DRY RUN")
+        print("END OF DRY RUN")
